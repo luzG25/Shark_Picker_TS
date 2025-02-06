@@ -1,29 +1,26 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router";
 import api from "../../api/api";
+import SharksType from "../SharkType";
 
-type Shark = {
-  id: string;
-  title: string;
-  image: { src: string; alt: string };
-  lat: number;
-  lon: number;
+const fetchSharks = async (): Promise<SharksType[]> => {
+  const response = await api.get("/sharks");
+  return response.data.sharks;
 };
 
 const SharksTable = () => {
-  const [sharks, setSharks] = useState<Shark[]>([]);
+  const {
+    data: sharks,
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["sharks"],
+    queryFn: fetchSharks,
+  });
 
-  useEffect(() => {
-    const fetchSharks = async () => {
-      try {
-        const response = await api.get("/sharks");
-        setSharks(response.data.sharks);
-      } catch (err) {
-        console.error("Erro ao buscar tubarões:", err);
-      }
-    };
-
-    fetchSharks();
-  }, []);
+  if (isLoading) return <p>Carregando tubarões...</p>;
+  if (isError) return <p>Erro ao carregar tubarões!</p>;
 
   return (
     <div className="overflow-x-auto">
@@ -37,7 +34,7 @@ const SharksTable = () => {
           </tr>
         </thead>
         <tbody>
-          {sharks.map((shark) => (
+          {sharks?.map((shark) => (
             <tr key={shark.id}>
               <td className="px-4 py-2">{shark.id}</td>
               <td className="px-4 py-2">{shark.title}</td>

@@ -1,0 +1,38 @@
+REACT QUERY
+
+INSTALAR:
+
+
+NO MAIN OU APP COLOCAR
+        import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+        const queryClient = new QueryClient();
+
+
+        <React.StrictMode>
+            <QueryClientProvider client={queryClient}>
+                <App />
+            </QueryClientProvider>
+        </React.StrictMode>
+
+
+useQuery substitui useEffect + useState para obter dados.
+APLICAR NO CODIGO DE DESTINO:
+        const fetchSharks = async (): Promise<Shark[]> => {
+    const response = await api.get("/sharks");
+    return response.data.sharks;
+    };
+
+    const SharksTable = () => {
+    const { data: sharks, isLoading, isError } = useQuery({
+        queryKey: ["sharks"],
+        queryFn: fetchSharks,
+    });
+
+
+USEMUTATION
+
+O useMutation é um hook do React Query usado para operações que modificam dados no servidor,
+como criar, atualizar ou deletar recursos. Ele não usa cache como useQuery, mas pode ser 
+combinado com invalidateQueries para atualizar a UI após a mutação.
+
