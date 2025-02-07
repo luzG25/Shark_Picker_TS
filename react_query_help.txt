@@ -36,3 +36,19 @@ O useMutation é um hook do React Query usado para operações que modificam dad
 como criar, atualizar ou deletar recursos. Ele não usa cache como useQuery, mas pode ser 
 combinado com invalidateQueries para atualizar a UI após a mutação.
 
+const mutation = useMutation({
+    mutationFn: (shark: SharksType) => updateSharks([...mySharks, shark]),
+    onSuccess: () => {
+      // Invalida e refaz o fetch da lista de tubarões
+      queryClient.invalidateQueries({ queryKey: ["mySharks"] });
+    },
+  });
+
+  const handleClick = async (shark: SharksType) => {
+    try {
+      mutation.mutate(shark);
+    } catch (err) {
+      console.error("Erro ao atualizar:", err);
+      alert("Erro ao atualizar os tubarões");
+    }
+  };

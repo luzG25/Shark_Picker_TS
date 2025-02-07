@@ -1,6 +1,5 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Link } from "react-router";
 import api from "../../api/api";
 import SharksType from "../SharkType";
 
@@ -23,7 +22,7 @@ const SharksTable = () => {
   if (isError) return <p>Erro ao carregar tubarões!</p>;
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto ">
       <table className="min-w-full table-auto">
         <thead>
           <tr>
@@ -42,7 +41,7 @@ const SharksTable = () => {
                 <img
                   src={`http://localhost:4000/${shark.image.src}`}
                   alt={shark.title}
-                  className="w-20 h-20 object-cover"
+                  className="w-40 h-20"
                 />
               </td>
               <td className="px-4 py-2">

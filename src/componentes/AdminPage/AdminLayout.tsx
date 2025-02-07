@@ -2,8 +2,8 @@ import { Outlet, Link } from "react-router";
 
 const AdminLayout = () => {
   return (
-    <div className="flex h-screen">
-      {/* Sidebar */}
+    <div className="flex min-h-screen">
+      {/* sidebar */}
       <aside className="w-64 bg-gray-800 text-white p-5">
         <h2 className="text-xl font-bold mb-4">Admin Dashboard</h2>
         <nav className="flex flex-col gap-2">
@@ -16,9 +16,9 @@ const AdminLayout = () => {
         </nav>
       </aside>
 
-      {/* Conteúdo principal */}
-      <main className="flex-1 p-6 bg-gray-100">
-        <Outlet /> {/* Renderiza as rotas aninhadas */}
+      {/* principal */}
+      <main className="flex-1 p-6 bg-gray-100 min-h-screen">
+        <Outlet /> {/* Renderiza as rotas */}
       </main>
     </div>
   );
