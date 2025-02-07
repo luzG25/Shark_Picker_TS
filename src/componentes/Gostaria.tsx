@@ -1,24 +1,31 @@
-import React from "react";
+import React, { useEffect } from "react";
 import TubaraoCard from "./TubaraoCard";
 import SharksType from "./SharkType";
-import updateSharks from "../api/useUpdateMySharks";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { updateSharks } from "../api/sharkApi";
 
 type Props = {
-  mySharks: SharksType[];
-  setMySharks: React.Dispatch<React.SetStateAction<SharksType[] | []>>;
+  mySharks: SharksType[] | [];
 };
 
-const Gostaria: React.FC<Props> = ({ mySharks, setMySharks }) => {
+const Gostaria: React.FC<Props> = ({ mySharks }) => {
+  const queryClient = useQueryClient();
+
+  const mutation = useMutation({
+    mutationFn: (shark: SharksType) =>
+      updateSharks(mySharks.filter((s) => s.id !== shark.id)),
+    onSuccess: () => {
+      // Invalida a query e recarrega os dados de mySharks
+      queryClient.invalidateQueries({ queryKey: ["mySharks"] });
+    },
+  });
+
   const handleSharkClick = async (shark: SharksType) => {
     try {
-      await updateSharks(mySharks.filter((s) => s.id !== shark.id));
-      setMySharks((prevSharks: SharksType[]) =>
-        prevSharks.filter((s) => s.id !== shark.id)
-      );
-      alert("Lista de tubarões atualizada!");
+      mutation.mutate(shark);
     } catch (err) {
       console.error("Erro ao atualizar:", err);
-      alert("Erro ao atualizar os tubaroes");
+      alert("Erro ao atualizar os tubarões");
     }
   };
 

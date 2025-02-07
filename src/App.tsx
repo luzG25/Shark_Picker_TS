@@ -4,29 +4,46 @@ import Gostaria from "./componentes/Gostaria";
 import SharksType from "./componentes/SharkType";
 import TubaraoCard from "./componentes/TubaraoCard";
 import useFetchSharks from "./api/useFetchSharks";
-import updateSharks from "./api/useUpdateMySharks";
 import useFetchMySharks from "./api/useFetchMySharks";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchMySharks, fetchSharks, updateSharks } from "./api/sharkApi";
 
 function App() {
-  const { sharks, loading, error } = useFetchSharks();
+  const queryClient = useQueryClient();
+
   const {
-    sharks: mySharks,
-    loading: loadingMySharks,
-    error: errorMySharks,
-    setSharks: setMySharks,
-  } = useFetchMySharks();
+    data: sharks,
+    isLoading,
+    isError,
+    error,
+  } = useQuery<SharksType[] | []>({
+    queryKey: ["sharks"],
+    queryFn: fetchSharks,
+  });
+
+  const {
+    data: mySharks = [],
+    isLoading: loadingMySharks,
+    isError: errorMySharks,
+  } = useQuery<SharksType[] | []>({
+    queryKey: ["mySharks"],
+    queryFn: fetchMySharks,
+  });
+
+  const mutation = useMutation({
+    mutationFn: (shark: SharksType) => updateSharks([...mySharks, shark]),
+    onSuccess: () => {
+      // Invalida e refaz o fetch da lista de tubarões
+      queryClient.invalidateQueries({ queryKey: ["mySharks"] });
+    },
+  });
 
   const handleClick = async (shark: SharksType) => {
-    alert("tubarao clicado " + shark.title);
-
     try {
-      // Exemplo de como atualizar a lista de tubarões
-      await updateSharks([...mySharks, shark]);
-      setMySharks([...mySharks, shark]);
-      alert("Lista de tubarões atualizada!");
+      mutation.mutate(shark);
     } catch (err) {
       console.error("Erro ao atualizar:", err);
-      alert("Erro ao atualizar os tubaroes");
+      alert("Erro ao atualizar os tubarões");
     }
   };
 
@@ -35,7 +52,7 @@ function App() {
       <Header />
 
       <div className="flex flex-col gap-5">
-        <Gostaria mySharks={mySharks} setMySharks={setMySharks} />
+        <Gostaria mySharks={mySharks} />
         <div className="flex flex-col items-center border border-gray-700 rounded-lg  p-2">
           <h1 className="text-blue-200 font-bold text-sm">
             Tubarōes existentes
@@ -47,7 +64,7 @@ function App() {
 
           {/*Mostar Imagens */}
           <div className="mt-2 grid grid-cols-3 gap-2 ">
-            {sharks.map((shark, index) => (
+            {sharks?.map((shark, index) => (
               <TubaraoCard
                 key={index}
                 shark={shark}
