@@ -44,12 +44,24 @@ function App() {
     }
   };
 
+  const errorClass = "text-gray-400 text-center";
+  const loadingClass = "text-gray-400 text-center";
+
   return (
     <div className="px-20 ">
       <Header />
 
       <div className="flex flex-col gap-5">
-        <Gostaria mySharks={mySharks} />
+        {errorMySharks ? (
+          <p className={errorClass}>"Erro em carregar meus tubarões"</p>
+        ) : (
+          <Gostaria mySharks={mySharks} />
+        )}
+
+        {loadingMySharks && (
+          <p className={loadingClass}>Carregando Meus Tubarões...</p>
+        )}
+
         <div className="flex flex-col items-center border border-gray-700 rounded-lg  p-2">
           <h1 className="text-blue-200 font-bold text-sm">
             Tubarōes existentes
@@ -60,15 +72,20 @@ function App() {
           </div>
 
           {/*Mostar Imagens */}
-          <div className="mt-2 grid grid-cols-3 gap-2 ">
-            {sharks?.map((shark, index) => (
-              <TubaraoCard
-                key={index}
-                shark={shark}
-                handleClick={handleClick}
-              />
-            ))}
-          </div>
+          {isLoading && <p className={loadingClass}>Carregando Imagens...</p>}
+          {isError ? (
+            <p className={errorClass}>Erro em carregar Tubarōes</p>
+          ) : (
+            <div className="mt-2 grid grid-cols-3 gap-2 ">
+              {sharks?.map((shark, index) => (
+                <TubaraoCard
+                  key={index}
+                  shark={shark}
+                  handleClick={handleClick}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </div>
