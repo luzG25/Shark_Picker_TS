@@ -1,10 +1,7 @@
-import { useEffect, useState } from "react";
 import Header from "./componentes/Header";
 import Gostaria from "./componentes/Gostaria";
 import SharksType from "./componentes/SharkType";
 import TubaraoCard from "./componentes/TubaraoCard";
-import useFetchSharks from "./api/useFetchSharks";
-import useFetchMySharks from "./api/useFetchMySharks";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchMySharks, fetchSharks, updateSharks } from "./api/sharkApi";
 

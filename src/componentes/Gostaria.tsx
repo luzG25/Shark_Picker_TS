@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useState } from "react";
 import TubaraoCard from "./TubaraoCard";
 import SharksType from "./SharkType";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -10,23 +10,30 @@ type Props = {
 
 const Gostaria: React.FC<Props> = ({ mySharks }) => {
   const queryClient = useQueryClient();
+  const [isOpen, setIsOpen] = useState<string | null>(null); // Estado para controlar o modal
 
   const mutation = useMutation({
-    mutationFn: (shark: SharksType) =>
-      updateSharks(mySharks.filter((s) => s.id !== shark.id)),
+    mutationFn: (id: string | null) =>
+      updateSharks(mySharks.filter((s) => s.id !== id)),
     onSuccess: () => {
       // Invalida a query e recarrega os dados de mySharks
       queryClient.invalidateQueries({ queryKey: ["mySharks"] });
     },
   });
 
-  const handleSharkClick = async (shark: SharksType) => {
+  const handleDelete = async () => {
     try {
-      mutation.mutate(shark);
+      mutation.mutate(isOpen);
     } catch (err) {
       console.error("Erro ao atualizar:", err);
       alert("Erro ao atualizar os tubarões");
+    } finally {
+      setIsOpen(null);
     }
+  };
+
+  const handleClose = (): void => {
+    setIsOpen(null); // Fecha o modal
   };
 
   return (
@@ -41,10 +48,41 @@ const Gostaria: React.FC<Props> = ({ mySharks }) => {
           <TubaraoCard
             key={index}
             shark={shark}
-            handleClick={handleSharkClick}
+            handleClick={() => setIsOpen(shark.id)}
           />
         ))}
       </div>
+
+      {/* Modal (Popup) */}
+      {isOpen && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50"
+          aria-labelledby="modal-title"
+          role="dialog"
+          aria-modal="true"
+        >
+          <div className="bg-white rounded-lg shadow-lg w-96 p-6 relative">
+            <h1 id="modal-title" className="text-xl font-bold mb-4">
+              Tem a certeza?
+            </h1>
+            <p className="mb-6">Quer mesmo remover este tubarão?</p>
+            <div className="flex justify-end space-x-4">
+              <button
+                onClick={handleClose}
+                className="bg-gray-300 text-gray-700 px-4 py-2 rounded hover:bg-gray-400"
+              >
+                Não
+              </button>
+              <button
+                onClick={handleDelete}
+                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+              >
+                Sim
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

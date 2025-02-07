@@ -1,6 +1,12 @@
 import React, { useState } from "react";
+import SharksType from "./SharkType";
 
-const Confirm_Delete: React.FC = () => {
+type Props = {
+  shark: SharksType;
+  onClose: () => void;
+};
+
+const Confirm_Delete: React.FC<Props> = (shark, onL) => {
   const [isOpen, setIsOpen] = useState<boolean>(false); // Estado para controlar o modal
 
   const handleClose = (): void => {
