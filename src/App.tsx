@@ -12,7 +12,6 @@ function App() {
     data: sharks,
     isLoading,
     isError,
-    error,
   } = useQuery<SharksType[] | []>({
     queryKey: ["sharks"],
     queryFn: fetchSharks,
