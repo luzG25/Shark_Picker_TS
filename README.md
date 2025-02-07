@@ -24,6 +24,6 @@
 
 3. Instalar o devido Backend, e rodar backend no endereço http://localhost:4000/
 
-4. npm run dev
+4. Executar no terminal deste projeto: npm run dev
 
 5. Abrir o site no Browser
